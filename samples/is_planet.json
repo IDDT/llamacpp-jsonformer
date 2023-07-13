@@ -1,0 +1,6 @@
+{
+  "type": "object",
+  "properties": {
+    "is_planet": {"type": "boolean"}
+  }
+}

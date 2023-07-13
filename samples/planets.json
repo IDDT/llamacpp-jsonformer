@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "planets": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
