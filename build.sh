@@ -11,6 +11,6 @@ COMMIT="b2e071dd86f4e934e5eb0755d57067567a88d5ce"
 cd temp && wget -O llamacpp.zip https://github.com/ejones/llama.cpp/archive/$COMMIT.zip \
   && unzip llamacpp.zip && mv llama.cpp-$COMMIT llamacpp \
   && cd llamacpp && make && mv main ../binary \
-  && cd .. && rm -rf llamacpp llamacpp.zip
+  && cd .. && rm -rf llamacpp \
+  && echo "Build finished successfully."
 
-echo "All done."
