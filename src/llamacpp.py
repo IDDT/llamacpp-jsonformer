@@ -1,9 +1,11 @@
 import subprocess
 import logging
+import time
 from .config import BINARY_PATH, MODEL_PATH
 
 
 def infer(grammar:str, prompt:str='') -> str:
+    start_time = time.time()
     try:
         out = subprocess.run([
             BINARY_PATH,
@@ -17,5 +19,6 @@ def infer(grammar:str, prompt:str='') -> str:
     except Exception as e:
         logging.error(f'llamacpp failed with exc:{type(e)} msg:{str(e)}')
     else:
-         return out.stdout.decode('utf-8')
+        logging.info(f'Processed in {time.time() - start_time:.2f}s')
+        return out.stdout.decode('utf-8')
     return ''

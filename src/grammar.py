@@ -1,7 +1,6 @@
 from typing import Sequence
 import json
 import re
-import sys
 
 
 # whitespace is constrained to a single space char to prevent model "running away" in
@@ -92,7 +91,7 @@ class SchemaConverter:
         return '\n'.join((f'{name} ::= {rule}' for name, rule in self._rules.items()))
 
 
-def gen_grammar(schema:dict, key_order:list[str]=[]) -> str:
+def gen_grammar(schema:dict, key_order:Sequence[str]=[]) -> str:
     converter = SchemaConverter({key: k for k, key in enumerate(key_order)})
     converter.visit(schema, '')
     return converter.format_grammar()
