@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {"type": "string"},
+    "category": {"type": "string"},
+    "color_name": {"type": "string"},
+    "wearing_occasions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "search_queries": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
