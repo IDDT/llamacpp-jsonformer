@@ -1,28 +1,22 @@
 import json
-import logging
-from flask import Flask, request, jsonify
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Route
 from .grammar import gen_grammar
 from .llamacpp import infer
 
 
-app = Flask(__name__)
-
-
-@app.route('/', methods=['POST'])
-def index():
-    body = request.get_json()
-    prompt = str(body.get('prompt', ''))
-    schema = body.get('schema', {'type': 'object', 'properties': {}})
-    order = [str(x) for x in body.get('order', [])]
-
-    # Generate grammar.
+async def index(request):
+    x = await request.json()
+    schema = x.get('schema', {'type': 'object', 'properties': {}})
+    order = [str(x) for x in x.get('order', [])]
+    prompt = str(x.get('prompt', ''))
     grammar = gen_grammar(schema, order)
+    out = infer(grammar, prompt).strip().removeprefix(prompt)
+    print(out)
+    return JSONResponse(json.loads(out))
 
-    # Run inference.
-    s = infer(grammar, prompt)
-    logging.info(s)
 
-    # Parse output as json.
-    out = json.loads(s.strip().removeprefix(prompt))
-
-    return jsonify(out)
+app = Starlette(debug=True, routes=[
+    Route('/', index, methods=['POST'])
+])

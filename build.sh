@@ -13,4 +13,3 @@ cd temp && wget -O llamacpp.zip https://github.com/ejones/llama.cpp/archive/$COM
   && cd llamacpp && make && mv main ../binary \
   && cd .. && rm -rf llamacpp \
   && echo "Build finished successfully."
-
