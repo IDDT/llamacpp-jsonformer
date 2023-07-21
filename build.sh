@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
-PLATFORM="$(uname -s | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m)"
+PLATFORM="$(uname -m)$(uname -s)"
+PLATFORM="$(echo $PLATFORM | tr '[:upper:]' '[:lower:]')"
 
-[ "$ARCH$PLATFORM" = "arm64darwin" ]\
+
+[ "$PLATFORM" = "arm64darwin" ]\
   && echo "Building with METAL support..." \
   && export LLAMA_METAL=1
 
-COMMIT="b2e071dd86f4e934e5eb0755d57067567a88d5ce"
+
+COMMIT="11315b1d61352944791db9c81db1b7bd8bd39f2e"
 cd temp && wget -O llamacpp.zip https://github.com/ejones/llama.cpp/archive/$COMMIT.zip \
   && unzip llamacpp.zip && mv llama.cpp-$COMMIT llamacpp \
-  && cd llamacpp && make && mv main ../binary \
-  && cd .. && rm -rf llamacpp \
-  && echo "Build finished successfully."
+  && cd llamacpp && make && mv main ../binary && cd .. \
+  && echo "Build successfull."
+
+LIB_METAL=llamacpp/ggml-metal.metal
+[ -f $LIB_METAL ] && cp $LIB_METAL .
+
+rm -rf llamacpp
