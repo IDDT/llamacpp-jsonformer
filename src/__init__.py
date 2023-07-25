@@ -24,7 +24,6 @@ async def api_list(request):
         'root ::= ' + ' '.join('line' for _ in range(n_items)),
         f'line ::= {bnf}'
     ])
-    print(grammar)
     out = infer(grammar, prompt).strip().removeprefix(prompt)
     return PlainTextResponse(out)
 
@@ -35,7 +34,6 @@ async def api_json(request):
     prompt = str(x.get('prompt', ''))
     grammar = gen_grammar(schema, order)
     out = infer(grammar, prompt).strip().removeprefix(prompt)
-    print(out)
     return JSONResponse(json.loads(out))
 
 
