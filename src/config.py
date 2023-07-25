@@ -5,7 +5,7 @@ import logging
 
 # Logging.
 logging.basicConfig(
-    format='%(levelname)s: %(message)s',
+    format='%(levelname)s:     %(message)s',
     datefmt='%Y-%m-%dT%H:%M:%S',
     level=logging.INFO,
     stream=sys.stdout,

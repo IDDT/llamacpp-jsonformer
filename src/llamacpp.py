@@ -16,7 +16,7 @@ def infer(grammar:str, prompt:str='') -> str:
             '--model', MODEL_PATH,
             '--grammar', grammar,
             '--prompt', prompt,
-            #'-ngl', '32'
+            '--threads', '4'
         ], capture_output=True, check=True, timeout=60)
     except subprocess.CalledProcessError as e:
         code, msg = e.returncode, e.stderr.decode('utf-8').replace('\n', ';')
@@ -24,7 +24,7 @@ def infer(grammar:str, prompt:str='') -> str:
     except Exception as e:
         logging.error(f'llamacpp failed with exc:{type(e)} msg:{str(e)}')
     else:
-        logging.info(f'Processed in {time.time() - start_time:.2f}s')
+        logging.info(f'Inferred in {time.time() - start_time:.2f}s')
         return out.stdout.decode('utf-8')
     return ''
 
