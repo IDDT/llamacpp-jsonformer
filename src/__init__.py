@@ -18,10 +18,11 @@ async def api_list(request):
     x = await request.json()
     prompt = str(x.get('prompt', ''))
     n_items = int(x.get('n_items', 5))
-    chars = str(x.get('chars', '0-9A-z'))
+    charset = str(x.get('charset', '0-9A-z'))
+    bnf = str(x.get('bnf', f'"- " [{charset}]+ "\n"'))
     grammar = '\n'.join([
         'root ::= ' + ' '.join('line' for _ in range(n_items)),
-        f'line ::= "- " [{chars}]+ "\n"'
+        f'line ::= {bnf}'
     ])
     print(grammar)
     out = infer(grammar, prompt).strip().removeprefix(prompt)

@@ -70,7 +70,7 @@ yes
 
 ### List generation
 ```bash
-curl -X POST http://127.0.0.1:8000/list -H "Content-Type: application/json" -d '{"prompt": "Following are the planets of the solar system:\n", "n_items": 4, "chars": "A-z"}'
+curl -X POST http://127.0.0.1:8000/list -H "Content-Type: application/json" -d '{"prompt": "Following are the planets of the solar system:\n", "n_items": 4, "charset": "A-z"}'
 ```
 - Mercury
 - Venus
