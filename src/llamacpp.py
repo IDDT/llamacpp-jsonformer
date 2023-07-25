@@ -1,7 +1,11 @@
 import subprocess
+import asyncio
 import logging
 import time
-from .config import BINARY_PATH, MODEL_PATH
+from .config import BINARY_PATH, MODEL_PATH, CONCURRENCY
+
+
+semaphore = asyncio.Semaphore(CONCURRENCY)
 
 
 def infer(grammar:str, prompt:str='') -> str:
@@ -11,8 +15,9 @@ def infer(grammar:str, prompt:str='') -> str:
             BINARY_PATH,
             '--model', MODEL_PATH,
             '--grammar', grammar,
-            '--prompt', prompt
-        ], capture_output=True, check=True, timeout=30)
+            '--prompt', prompt,
+            #'-ngl', '32'
+        ], capture_output=True, check=True, timeout=60)
     except subprocess.CalledProcessError as e:
         code, msg = e.returncode, e.stderr.decode('utf-8').replace('\n', ';')
         logging.error(f'llamacpp failed with code:{code} msg:{msg}')
@@ -22,3 +27,8 @@ def infer(grammar:str, prompt:str='') -> str:
         logging.info(f'Processed in {time.time() - start_time:.2f}s')
         return out.stdout.decode('utf-8')
     return ''
+
+
+async def infer_async(*args, **kwargs):
+    async with semaphore:
+        return await asyncio.to_thread(infer, *args, **kwargs)

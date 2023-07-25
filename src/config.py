@@ -5,12 +5,17 @@ import logging
 
 # Logging.
 logging.basicConfig(
-    format='%(asctime)s,%(msecs)03d %(levelname)s %(message)s',
+    format='%(levelname)s: %(message)s',
     datefmt='%Y-%m-%dT%H:%M:%S',
     level=logging.INFO,
     stream=sys.stdout,
     force=True
 )
+
+
+# Configs.
+CONCURRENCY = max(1, int(os.getenv('CONCURRENCY', 1)))
+logging.info(f'Concurrency is set to {CONCURRENCY}')
 
 
 # Paths.

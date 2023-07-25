@@ -3,7 +3,7 @@ from starlette.applications import Starlette
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from .grammar import gen_grammar
-from .llamacpp import infer
+from .llamacpp import infer_async
 
 
 async def api_choices(request):
@@ -11,7 +11,8 @@ async def api_choices(request):
     choices = [str(x) for x in x.get('choices', ['yes', 'no'])]
     prompt = str(x.get('prompt', ''))
     grammar = 'root ::= ' + ' | '.join(f'"{x}"' for x in choices)
-    out = infer(grammar, prompt).strip().removeprefix(prompt)
+    out = await infer_async(grammar, prompt)
+    out = out.strip().removeprefix(prompt)
     return PlainTextResponse(out)
 
 async def api_list(request):
@@ -24,7 +25,8 @@ async def api_list(request):
         'root ::= ' + ' '.join('line' for _ in range(n_items)),
         f'line ::= {bnf}'
     ])
-    out = infer(grammar, prompt).strip().removeprefix(prompt)
+    out = await infer_async(grammar, prompt)
+    out = out.strip().removeprefix(prompt)
     return PlainTextResponse(out)
 
 async def api_json(request):
@@ -33,7 +35,8 @@ async def api_json(request):
     order = [str(x) for x in x.get('order', [])]
     prompt = str(x.get('prompt', ''))
     grammar = gen_grammar(schema, order)
-    out = infer(grammar, prompt).strip().removeprefix(prompt)
+    out = await infer_async(grammar, prompt)
+    out = out.strip().removeprefix(prompt)
     return JSONResponse(json.loads(out))
 
 
