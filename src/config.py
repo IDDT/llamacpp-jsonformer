@@ -20,5 +20,5 @@ logging.info(f'Concurrency is set to {CONCURRENCY}')
 
 # Paths.
 TEMP_DIR = 'temp'
-BINARY_PATH = os.path.join(TEMP_DIR, 'binary')
-MODEL_PATH = os.path.join(TEMP_DIR, 'model.bin')
+BINARY_PATH = os.path.join(TEMP_DIR, 'main')
+MODEL_PATH = os.path.join(TEMP_DIR, 'model.gguf')

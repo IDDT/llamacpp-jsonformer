@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 PLATFORM="$(uname -m)$(uname -s)"
 PLATFORM="$(echo $PLATFORM | tr '[:upper:]' '[:lower:]')"
 
@@ -8,13 +9,15 @@ PLATFORM="$(echo $PLATFORM | tr '[:upper:]' '[:lower:]')"
   && echo "Building with METAL support..." \
   && export LLAMA_METAL=1
 
-COMMIT="41c674161fb2459bdf7806d1eebead15bc5d046e"
-cd temp && wget -O llamacpp.zip https://github.com/ggerganov/llama.cpp/archive/$COMMIT.zip \
+
+COMMIT="3e5ca7931c68152e4ec18d126e9c832dd84914c8"
+URL="https://github.com/ggerganov/llama.cpp/archive/$COMMIT.zip"
+FILES=( "main" "ggml-metal.metal" )
+wget -O llamacpp.zip $URL \
   && unzip llamacpp.zip && mv llama.cpp-$COMMIT llamacpp \
-  && cd llamacpp && make && mv main ../binary && cd .. \
-  && echo "Build successfull."
-
-LIB_METAL=llamacpp/ggml-metal.metal
-[ -f $LIB_METAL ] && cp $LIB_METAL .
-
-rm -rf llamacpp
+  && cd llamacpp && make -B LLAMA_DISABLE_LOGS=1 && cd .. \
+  && for f in "${FILES[@]}"; do \
+    mv "llamacpp/$f" "temp/$f"; done \
+  && rm -rf llamacpp.zip llamacpp \
+  && echo "Build succeeded." && exit 0 \
+  || echo "Build failed." >&2 && exit 1
