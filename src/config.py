@@ -14,6 +14,7 @@ logging.basicConfig(
 
 
 # Configs.
+N_PROCS = max(1, (os.cpu_count() or 2) // 2)
 CONCURRENCY = max(1, int(os.getenv('CONCURRENCY', 1)))
 logging.info(f'Concurrency is set to {CONCURRENCY}')
 

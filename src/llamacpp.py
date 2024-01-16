@@ -2,7 +2,7 @@ import subprocess
 import asyncio
 import logging
 import time
-from .config import BINARY_PATH, MODEL_PATH, CONCURRENCY
+from .config import BINARY_PATH, MODEL_PATH, CONCURRENCY, N_PROCS
 
 
 semaphore = asyncio.Semaphore(CONCURRENCY)
@@ -13,12 +13,12 @@ def infer(grammar:str, prompt:str='') -> str:
     try:
         out = subprocess.run([
             BINARY_PATH,
-            '--model', MODEL_PATH,
-            '--grammar', grammar,
             '--prompt', prompt,
-            '--threads', '4',
+            '--grammar', grammar,
+            '--model', MODEL_PATH,
+            '--threads', str(N_PROCS),
+            '--no-display-prompt',
             '--simple-io',
-            '--no-display-prompt'
         ], capture_output=True, check=True, timeout=60)
     except subprocess.CalledProcessError as e:
         code, msg = e.returncode, e.stderr.decode('utf-8').replace('\n', ';')
