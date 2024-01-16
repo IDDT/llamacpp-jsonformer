@@ -1,4 +1,4 @@
-from typing import Sequence
+# Adapted from https://github.com/ggerganov/llama.cpp/blob/master/examples/json-schema-to-grammar.py
 import json
 import re
 
@@ -6,15 +6,23 @@ import re
 # whitespace is constrained to a single space char to prevent model "running away" in
 # whitespace. Also maybe improves generation quality?
 SPACE_RULE = '" "?'
+
+
+PRIMITIVE_RULES = {
+    'boolean': '("true" | "false") space',
+    'number': '("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? space',
+    'integer': '("-"? ([0-9] | [1-9] [0-9]*)) space',
+    'string': r''' "\"" (
+        [^"\\] |
+        "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
+      )* "\"" space ''',
+    'null': '"null" space',
+}
+
+
 INVALID_RULE_CHARS_RE = re.compile(r'[^a-zA-Z0-9-]+')
 GRAMMAR_LITERAL_ESCAPE_RE = re.compile(r'[\r\n"]')
 GRAMMAR_LITERAL_ESCAPES = {'\r': '\\r', '\n': '\\n', '"': '\\"'}
-PRIMITIVE_RULES = {
-    'boolean': '("true" | "false") space',
-    'number': '[0-9]+ space', # TODO complete
-    'string': r'"\"" [ \t!#-\[\]-~]* "\"" space', # TODO complete
-    'null': '"null" space',
-}
 
 
 class SchemaConverter:
@@ -85,13 +93,16 @@ class SchemaConverter:
 
         else:
             assert schema_type in PRIMITIVE_RULES, f'Unrecognized schema: {schema}'
-            return self._add_rule(schema_type, PRIMITIVE_RULES[schema_type])
+            return self._add_rule(
+                'root' if rule_name == 'root' else schema_type,
+                PRIMITIVE_RULES[schema_type]
+            )
 
     def format_grammar(self):
         return '\n'.join((f'{name} ::= {rule}' for name, rule in self._rules.items()))
 
 
-def gen_grammar(schema:dict, key_order:Sequence[str]=[]) -> str:
+def gen_grammar(schema:dict, key_order:list[str]=[]) -> str:
     converter = SchemaConverter({key: k for k, key in enumerate(key_order)})
     converter.visit(schema, '')
     return converter.format_grammar()
