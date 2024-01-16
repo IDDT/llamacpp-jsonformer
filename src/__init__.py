@@ -12,8 +12,7 @@ async def api_choices(request):
     prompt = str(x.get('prompt', ''))
     grammar = 'root ::= ' + ' | '.join(f'"{x}"' for x in choices)
     out = await infer_async(grammar, prompt)
-    out = out.strip().removeprefix(prompt)
-    return PlainTextResponse(out)
+    return PlainTextResponse(out.strip())
 
 async def api_list(request):
     x = await request.json()
@@ -26,8 +25,7 @@ async def api_list(request):
         f'line ::= {bnf}'
     ])
     out = await infer_async(grammar, prompt)
-    out = out.strip().removeprefix(prompt)
-    return PlainTextResponse(out)
+    return PlainTextResponse(out.strip())
 
 async def api_json(request):
     x = await request.json()
@@ -36,8 +34,7 @@ async def api_json(request):
     prompt = str(x.get('prompt', ''))
     grammar = gen_grammar(schema, order)
     out = await infer_async(grammar, prompt)
-    out = out.strip().removeprefix(prompt)
-    return JSONResponse(json.loads(out))
+    return JSONResponse(json.loads(out.strip()))
 
 
 app = Starlette(debug=True, routes=[

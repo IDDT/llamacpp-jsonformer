@@ -16,7 +16,9 @@ def infer(grammar:str, prompt:str='') -> str:
             '--model', MODEL_PATH,
             '--grammar', grammar,
             '--prompt', prompt,
-            '--threads', '4'
+            '--threads', '4',
+            '--simple-io',
+            '--no-display-prompt'
         ], capture_output=True, check=True, timeout=60)
     except subprocess.CalledProcessError as e:
         code, msg = e.returncode, e.stderr.decode('utf-8').replace('\n', ';')
